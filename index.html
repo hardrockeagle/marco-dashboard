@@ -1,528 +1,521 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2822
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Marco Dashboard</title>
 
-\f0\fs24 \cf0 <!doctype html>\
-<html lang="de">\
-<head>\
-  <meta charset="utf-8" />\
-  <meta name="viewport" content="width=device-width,initial-scale=1" />\
-  <title>Marco Dashboard</title>\
-\
-  <!-- Poppins Font -->\
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">\
-\
-  <!-- Leaflet CSS -->\
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>\
-\
-\
-  <style>\
-    :root \{\
-      --bg:#06060a;\
-      --panel: rgba(255,255,255,0.04);\
-      --glass-border: rgba(255,255,255,0.06);\
-      --muted: rgba(255,255,255,0.62);\
-     --accent: #ff4000;  /* Startfarbe des Verlaufs */\
-  --accent-2: #7a0000; /* Endfarbe des Verlaufs */\
-      --gap: 18px;\
-      font-family: 'Poppins', sans-serif;\
-    \}\
-\
-    html,body \{\
-      height:100%; margin:0; background:var(--bg); color:#eef2f8;\
-      -webkit-font-smoothing:antialiased;\
-    \}\
-\
-    body::before \{\
-      content:""; position:fixed; inset:0; z-index:1;\
-      background: radial-gradient(ellipse at center, rgba(0,0,0,0.0) 45%, rgba(0,0,0,0.6) 100%);\
-      pointer-events:none;\
-    \}\
-\
-    .light-rays \{\
-      position:fixed; inset:-20% -10% auto -10%; height:60%;\
-      z-index:1; pointer-events:none;\
-      background:\
-        radial-gradient(800px 200px at 5% 20%, rgba(139,92,246,0.035), transparent 12%),\
-        radial-gradient(700px 180px at 92% 85%, rgba(0,230,255,0.03), transparent 12%);\
-      mix-blend-mode:screen; animation: floatRays 14s linear infinite;\
-    \}\
-    @keyframes floatRays \{ 0%\{transform:translateY(0)\}50%\{transform:translateY(-8px)\}100%\{transform:translateY(0)\} \}\
-\
-    .app \{\
-      position:relative; z-index:2;\
-      max-width:1200px; margin:36px auto; padding:18px;\
-      display:grid; grid-template-columns:1fr 1fr; gap:var(--gap);\
-    \}\
-\
-    .card \{\
-      border-radius:14px; padding:16px;\
-      background:var(--panel); border:1px solid var(--glass-border);\
-      backdrop-filter:blur(10px);\
-      box-shadow:0 8px 30px rgba(0,0,0,0.55);\
-      display:flex; flex-direction:column; gap:10px;\
-    \}\
-\
-/* --- Begr\'fc\'dfungs-Box --- */\
-.card.greeting \{\
-  grid-column: 1 / -1;\
-  height: 110px;\
-  display:flex;\
-  flex-direction:column;\
-  align-items:center;\
-  justify-content:center;\
-  text-align:center;\
-  padding:18px;\
-  gap:6px;\
-  border-radius:14px;\
-  background:var(--panel);\
-  border:1px solid var(--glass-border);\
-  backdrop-filter:blur(10px);\
-\}\
-.card.greeting #greetingLine \{ font-size:20px; font-weight:700; \}\
-.card.greeting #greetingDateTime \{ color:var(--muted); font-size:13px; \}\
-\
-/* --- Cannabis Drehrad --- */\
-#cannabisDial \{ width:260px; margin:8px auto 0; \}\
-#cannabisDial svg \{ overflow: visible; display:block; \}\
-#cannabisDial line \{ transition: stroke-width 240ms ease, transform 300ms ease; \}\
-#cannabisDial text \{ font-family: 'Poppins', sans-serif; fill:var(--muted); font-weight:600; font-size:12px; \}\
-#cannabisCard .score-number \{ margin-top:6px; font-size:20px; text-align:center; \}\
-\
-/* Cannabis Card neues Layout */\
-#cannabisCard \{\
-  text-align: center;\
-  padding-top: 16px;\
-\}\
-\
-#cannabisCard .cannabis-top \{\
-  display: flex;\
-  justify-content: center;\
-  align-items: center;\
-  gap: 16px;\
-  margin-bottom: 8px;\
-\}\
-\
-#cannabisCard .score-number \{\
-  font-size: 28px;\
-  font-weight: 700;\
-  min-width: 100px;\
-\}\
-\
-#cannabisCard .cannabis-reset \{\
-  margin: 8px 0 8px;\
-\}\
-\
-#cannabisDial.cannabis-dial \{\
-  width: 100%;\
-  height: 200px;\
-  margin: 8;\
-\}\
-\
-    /* Wetter links */\
-    .weather \{ \
-      justify-content:center; \
-      text-align:center; \
-      height: 250px;\
-    \}\
-    .weather .temp \{ font-weight:700; font-size:32px; \}\
-    .weather .meta \{ color:var(--muted); font-size:13px; \}\
-\
-    /* Map rechts */\
-    .map-box \{ \
-      border-radius:12px; \
-      overflow:hidden; \
-      cursor:pointer; \
-      height: 250px;\
-    \}\
-    #map \{ width:100%; height:100%; border-radius:12px; \}\
-\
-    /* Small cards */\
-    .card.small \{ min-height:140px; justify-content:center; text-align:center; \}\
-\
-    .score-number \{ font-weight:700; font-size:22px; \}\
-    .score-controls \{ display:flex; gap:8px; justify-content:center; margin-top:8px; \}\
-    .btn \{ background: linear-gradient(180deg,var(--accent),var(--accent-2)); border:none; color:#000;\
-           padding:6px 12px; border-radius:10px; cursor:pointer; font-weight:600; font-size:13px; \}\
-    .btn.ghost \{ background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.1); \}\
-\
-    /* Calendar */\
-    .card.calendar \{ grid-column:1 / -1; padding:18px; gap:12px; \}\
-    .calendar-today-date \{ font-size:18px; font-weight:700; text-align:center; \}\
-    .calendar-today-tasks \{\
-      margin:10px auto 0; display:flex; gap:10px; padding:12px 18px;\
-      border-radius:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05);\
-      justify-content:center;\
-    \}\
-    .calendar-history \{ display:flex; flex-direction:column; gap:8px; \}\
-    .day-row \{ display:flex; gap:10px; padding:8px; border-radius:10px;\
-      background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); \}\
-    .day-date \{ min-width:100px; font-size:12px; color:var(--muted); \}\
-    .day-tasks \{ display:flex; gap:6px; flex-wrap:wrap; \}\
-\
-    /* Checklist */\
-    .card.checklist \{ min-height:230px; \}\
-    .tasks-wrap \{ display:flex; flex-direction:column; gap:10px; overflow:auto; max-height:320px; \}\
-    .task \{ border-radius:12px; padding:10px; background:rgba(255,255,255,0.02);\
-      border:1px solid rgba(255,255,255,0.05); display:flex; align-items:center;\
-      justify-content:space-between; font-weight:600; cursor:pointer; \}\
-    .task.completed \{ opacity:0.4; text-decoration:line-through; \}\
-    .task .label \{ display:flex; align-items:center; gap:10px; \}\
-    .task .delete \{ color:var(--muted); font-size:14px; cursor:pointer; \}\
-    .task.add \{ justify-content:center; font-size:18px; color:var(--muted); border:1px dashed rgba(255,255,255,0.1); \}\
-\
-/* --- MOBILE Anpassung --- */\
-@media(max-width:900px)\{\
-  .app \{\
-    display: grid;\
-    grid-template-columns: 1fr 1fr;\
-    gap: var(--gap);\
-  \}\
-\
-  /* Begr\'fc\'dfungsbox volle Breite */\
-  .card.greeting \{\
-    grid-column: 1 / -1;\
-  \}\
-\
-  /* Wetter links, Karte rechts */\
-  .weather \{\
-    grid-column: 1;\
-    height: 200px;\
-  \}\
-  .map-box \{\
-    grid-column: 2;\
-    height: 200px;\
-  \}\
-\
-  /* Alles ab der dritten Card nach Greeting, Wetter, Karte wieder volle Breite */\
-  .app > .card:nth-child(n+4) \{\
-    grid-column: 1 / -1;\
-  \}\
-\}\
-\
-/* Pulsierender Kreis f\'fcr Standort */\
-.leaflet-location-circle \{\
-  position: relative;\
-  width: 5px;\
-  height: 5px;\
-  border-radius: 50%;\
- background: red; /* hier */\
-  box-shadow: 0 0 12px rgba(255,0,0,0.8); /* Glow auch rot */\
-\}\
-\
-.leaflet-location-circle::after \{\
-  content: "";\
-  position: absolute;\
-  top: 0; left: 0; right: 0; bottom: 0;\
-  border-radius: 70%;\
-  background: red;\
-  animation: pulse 2.5s infinite;\
-\}\
-\
-@keyframes pulse \{\
-  0%   \{ transform: scale(1); opacity: 0.8; \}\
-  70%  \{ transform: scale(5); opacity: 0; \}\
-  100% \{ transform: scale(1); opacity: 0; \}\
-\}\
-\
-/* Auftau-Effekt beim Laden */\
-body \{\
-  filter: blur(25px);\
-  opacity: 50;\
-  animation: unblur 2.5s ease-out forwards;\
-\}\
-\
-@keyframes unblur \{\
-  0% \{ filter: blur(25px); opacity: 0; transform: translateY(-20px); \}\
-  100% \{ filter: blur(0); opacity: 1; transform: translateY(0); \}\
-\}\
-\
-\
-  </style>\
-</head>\
-<body>\
-  <div class="light-rays"></div>\
-  <main class="app">\
-\
-<!-- Begr\'fc\'dfungs-Box (neu) -->\
-<div class="card greeting" id="greetingCard">\
-  <div id="greetingLine">\'97</div>\
-  <div id="greetingDateTime">\'97</div>\
-</div>\
-\
-    <!-- Wetter links -->\
-    <div class="card weather" id="weatherCard">\
-      <div class="temp" id="curTemp">--\'b0</div>\
-      <div class="meta" id="tempMeta">L\'e4dt...</div>\
-    </div>\
-\
-    <!-- Map rechts (Leaflet) -->\
-    <div class="card map-box">\
-      <div id="map"></div>\
-    </div>\
-\
-<!-- Cannabis Score (Drehrad neu layoutet) -->\
-<div class="card" id="cannabisCard">\
-  <div style="text-align:center;font-weight:700;margin-bottom:6px;">Cannabis-Score</div>\
-\
-  <div class="cannabis-top">\
-    <button class="btn ghost" id="minusCann">\uc0\u8722 1</button>\
-    <div class="score-number" id="cannabisValueText">-- g</div>\
-    <button class="btn ghost" id="plusCann">+1</button>\
-  </div>\
-\
-  <div class="cannabis-reset">\
-    <button class="btn" id="resetCann">Reset</button>\
-  </div>\
-\
-  <!-- SVG-Drehrad darunter -->\
-  <div id="cannabisDial" class="cannabis-dial"></div>\
-</div>\
-\
-\
-\
-    <!-- Rauchen Ersparnis -->\
-    <div class="card small" id="smokeCard">\
-      <div>Rauchfrei Ersparnis</div>\
-      <div class="score-number" id="savedValue">-- \'80</div>\
-      <div class="meta">Seit 01.06.2024 \'95 8 \'80/Tag</div>\
-    </div>\
-\
-    <!-- Calendar -->\
-    <div class="card calendar">\
-      <div class="calendar-today-date" id="calendarToday">\'97</div>\
-      <div class="calendar-today-tasks" id="calendarTodayTasks"></div>\
-      <div class="calendar-history" id="calendarHistory"></div>\
-    </div>\
-\
-    <!-- Checklist -->\
-    <div class="card checklist">\
-      <div style="display:flex;justify-content:space-between;align-items:center;">\
-        <div><strong>Checkliste</strong></div>\
-        <button class="btn" id="addQuickBtn">+ Hinzuf\'fcgen</button>\
-      </div>\
-      <div class="tasks-wrap" id="tasksWrap"></div>\
-    </div>\
-\
-  </main>\
-\
-  <!-- Leaflet JS -->\
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>\
-\
-<script>\
-/* ---------------- Cannabis Score (Drehrad) ---------------- */\
-const baseCannabis = \{ grams: 3500, baseDate: new Date(Date.UTC(2025,9,1)), monthlyAdd: 50 \};\
-function monthDiff(d1,d2)\{ return (d2.getUTCFullYear()-d1.getUTCFullYear())*12 + (d2.getUTCMonth()-d1.getUTCMonth()); \}\
-function monthKey(d)\{ return d.getUTCFullYear() + "-" + String(d.getUTCMonth()+1).padStart(2,"0"); \}\
-\
-function loadCannabis()\{\
-  let st = JSON.parse(localStorage.getItem("sw_cannabis") || "null");\
-  const now = new Date();\
-  if(!st)\{\
-    const m = monthDiff(baseCannabis.baseDate, now);\
-    st = \{ grams: baseCannabis.grams + m * baseCannabis.monthlyAdd, lastMonthlyKey: monthKey(now) \};\
-  \}\
-  localStorage.setItem("sw_cannabis", JSON.stringify(st));\
-  return st;\
-\}\
-function saveCannabis(st)\{ localStorage.setItem("sw_cannabis", JSON.stringify(st)); renderCannabis(); \}\
-\
-function renderCannabis()\{\
-  const st = loadCannabis();\
-  const g = st.grams;\
-  const el = document.getElementById("cannabisValueText");\
-  if(el) el.textContent = g + " g";\
-  renderCannabisDial(g);\
-\}\
-\
-function adjustCannabis(d)\{\
-  let s = loadCannabis();\
-  s.grams += d;\
-  if(s.grams < 0) s.grams = 0;\
-  saveCannabis(s);\
-\}\
-\
-function resetCannabis()\{\
-  const now = new Date();\
-  const m = monthDiff(baseCannabis.baseDate, now);\
-  saveCannabis(\{ grams: baseCannabis.grams + m * baseCannabis.monthlyAdd, lastMonthlyKey: monthKey(now) \});\
-\}\
-\
-/* Zeichnet das minimalistische Drehrad als SVG */\
-function renderCannabisDial(grams)\{\
-  const container = document.getElementById("cannabisDial");\
-  if(!container) return;\
-\
-  const width = container.clientWidth || 480;\
-const height = 200;\
-const visibleSpan = 1000; // \'b1500 g\
-  const min = Math.max(0, Math.round(grams - visibleSpan/2));\
-  const max = Math.round(grams + visibleSpan/2);\
-  const ticks = 25; // etwas dichter, aber nicht zu viele\
-  const centerX = width / 2;\
-  const baseY = height * 0.35;\
-  const lineLen = 28;\
-\
-  const tickLines = [];\
-  for(let i=0;i<=ticks;i++)\{\
-    const t = i/ticks;\
-    const x = t * width;\
-    const y1 = baseY;\
-    const y2 = baseY - lineLen;\
-    // Fade-Out: Alpha verringert sich am Rand\
-    let alpha = 1 - Math.abs(t - 0.5) * 2; // Mitte = 1, R\'e4nder = 0\
-    if(alpha<0) alpha = 0;\
-    const strokeW = (i % 5 === 0) ? 2 : 1;\
-    tickLines.push(`<line x1="$\{x\}" y1="$\{y1\}" x2="$\{x\}" y2="$\{y2\}" stroke="rgba(255,255,255,$\{0.8*alpha\})" stroke-width="$\{strokeW\}" stroke-linecap="round"/>`);\
-  \}\
-\
-  // roter Marker mittig\
-  const markerX = centerX;\
-  const marker = `<line x1="$\{markerX\}" y1="$\{baseY\}" x2="$\{markerX\}" y2="$\{baseY - lineLen - 6\}" stroke="#FF3B3B" stroke-width="3" stroke-linecap="round"/>`;\
-\
-  const svg = `<svg width="$\{width\}" height="$\{height\}" viewBox="0 0 $\{width\} $\{height\}" xmlns="http://www.w3.org/2000/svg">\
-    $\{tickLines.join("")\}\
-    $\{marker\}\
-    <text x="20" y="$\{baseY+20\}" font-size="12" text-anchor="start" fill="rgba(255,255,255,0.7)">$\{min\} g</text>\
-    <text x="$\{width-20\}" y="$\{baseY+20\}" font-size="12" text-anchor="end" fill="rgba(255,255,255,0.7)">$\{max\} g</text>\
-  </svg>`;\
-\
-  container.innerHTML = svg;\
-\}\
-\
-\
-/* ---------------- Greeting Box (dynamisch) ---------------- */\
-function updateGreeting()\{\
-  const now = new Date();\
-  const h = now.getHours();\
-  let greet = (h >= 3 && h < 11) ? 'Guten Morgen, Marco.' : (h >= 11 && h < 18) ? 'Guten Tag, Marco.' : 'Guten Abend, Marco.';\
-  const dateStr = now.toLocaleDateString('de-DE', \{ weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' \});\
-  const timeStr = now.toLocaleTimeString('de-DE', \{ hour: '2-digit', minute: '2-digit' \});\
-  const lineEl = document.getElementById('greetingLine');\
-  const dtEl = document.getElementById('greetingDateTime');\
-  if(lineEl) lineEl.textContent = greet;\
-  if(dtEl) dtEl.textContent = `$\{dateStr\} \'95 $\{timeStr\}`;\
-\}\
-setInterval(updateGreeting, 1000);\
-updateGreeting();\
-\
-/* ---------------- Rauchen Ersparnis ---------------- */\
-\
-const smokeStart=new Date(Date.UTC(2024,5,1)),price=8;\
-function computeSaved()\{const now=new Date();const days=Math.floor((now-smokeStart)/(1000*60*60*24));return days*price;\}\
-\
-/* ---------------- Tasks ---------------- */\
-const DEF=[\{id:"guitar",title:"Gitarre \'fcben",icon:"\uc0\u55356 \u57272 "\},\
-\{id:"bike",title:"Fahrrad fahren",icon:"\uc0\u55357 \u57010 "\},\
-\{id:"sling",title:"Zwille schie\'dfen",icon:"\uc0\u55356 \u57337 "\},\
-\{id:"ets",title:"ETS lernen",icon:"\uc0\u55357 \u56538 "\},\
-\{id:"content",title:"SomaWerk Content",icon:"\uc0\u55356 \u57253 "\}];\
-function loadDefs()\{\
-  let stored = [];\
-  try \{\
-    let raw = localStorage.getItem("sw_tasks_defs");\
-    if (raw) stored = JSON.parse(raw);\
-  \} catch(e)\{\
-    stored = [];\
-  \}\
-\
-  // Kombiniere Defaults + gespeicherte, ohne doppelte IDs\
-  const merged = [...DEF];\
-  stored.forEach(task => \{\
-    if (!merged.find(t => t.id === task.id)) \{\
-      merged.push(task);\
-    \}\
-  \});\
-\
-  return merged;\
-\}\
-function saveDefs(d)\{localStorage.setItem("sw_tasks_defs",JSON.stringify(d));\}\
-function loadStore()\{return JSON.parse(localStorage.getItem("sw_calendar")||"\{\}");\}\
-function saveStore(s)\{localStorage.setItem("sw_calendar",JSON.stringify(s));\}\
-function todayKey()\{return new Date().toISOString().split("T")[0];\}\
-function isDone(id)\{return (loadStore()[todayKey()]||[]).includes(id);\}\
-function toggleTask(id)\{let s=loadStore(),arr=s[todayKey()]||[],i=arr.indexOf(id);if(i==-1)arr.push(id);else arr.splice(i,1);s[todayKey()]=arr;saveStore(s);renderTasks();renderCalendar();\}\
-function addTask(t,icon)\{let d=loadDefs();d.push(\{id:"t_"+Date.now(),title:t,icon:icon||"\uc0\u10133 "\});saveDefs(d);renderTasks();\}\
-function deleteTask(id)\{let d=loadDefs().filter(x=>x.id!==id);saveDefs(d);let s=loadStore();Object.keys(s).forEach(k=>\{s[k]=s[k].filter(x=>x!==id)\});saveStore(s);renderTasks();renderCalendar();\}\
-\
-/* ---------------- Render ---------------- */\
-function renderTasks()\{\
-  let d=loadDefs(),wrap=document.getElementById("tasksWrap");wrap.innerHTML="";\
-  d.forEach(task=>\{\
-    let el=document.createElement("div");el.className="task"+(isDone(task.id)?" completed":"");\
-    el.innerHTML=`<div class="label"><span>$\{task.icon\}</span><span>$\{task.title\}</span></div><span class="delete">X</span>`;\
-    el.querySelector(".label").onclick=()=>toggleTask(task.id);\
-    el.querySelector(".delete").onclick=()=>deleteTask(task.id);\
-    wrap.appendChild(el);\
-  \});\
-  let add=document.createElement("div");add.className="task add";add.textContent="+";add.onclick=()=>\{let t=prompt("Neue Aufgabe:");if(t)addTask(t,prompt("Icon (Emoji):","\uc0\u10133 "));\};wrap.appendChild(add);\
-\}\
-function renderCalendar()\{\
-  let today=new Date();document.getElementById("calendarToday").textContent=today.toLocaleDateString("de-DE",\{weekday:"long",day:"numeric",month:"long",year:"numeric"\});\
-  let store=loadStore(),arr=store[todayKey()]||[],defs=Object.fromEntries(loadDefs().map(x=>[x.id,x]));\
-  let box=document.getElementById("calendarTodayTasks");box.innerHTML=arr.length?arr.map(id=>defs[id]?.icon||" ").join(" "):"<span class='meta'>Keine Tasks</span>";\
-  let hist=document.getElementById("calendarHistory");hist.innerHTML="";Object.keys(store).sort().reverse().filter(k=>k<todayKey()).slice(0,7).forEach(k=>\{\
-    let row=document.createElement("div");row.className="day-row";row.innerHTML=`<div class="day-date">$\{new Date(k).toLocaleDateString("de-DE",\{weekday:"short",day:"2-digit",month:"2-digit"\})\}</div><div class="day-tasks">$\{store[k].map(id=>defs[id]?.icon||"\uc0\u9679 ").join(" ")\}</div>`;hist.appendChild(row);\
-  \});\
-\}\
-\
-/* ---------------- Wetter ---------------- */\
-async function loadWeather(lat,lon)\{\
-  const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=$\{lat\}&longitude=$\{lon\}&current_weather=true&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`);\
-  const j=await r.json();if(j.current_weather)\{document.getElementById("curTemp").textContent=Math.round(j.current_weather.temperature)+"\'b0C";\
-    document.getElementById("tempMeta").textContent=`$\{Math.round(j.daily.temperature_2m_min[0])\}\'b0 / $\{Math.round(j.daily.temperature_2m_max[0])\}\'b0 \'95 Regen: $\{Math.round(j.daily.precipitation_probability_max[0])\}%`;\
-    updateMap(lat,lon);\
-  \}\
-\}\
-\
-/* ---------------- Map (Leaflet) ---------------- */\
-let map;\
-function initMap(lat,lon)\{\
-  map = L.map('map').setView([lat, lon], 10);\
-  L.tileLayer('https://\{s\}.basemaps.cartocdn.com/dark_all/\{z\}/\{x\}/\{y\}\{r\}.png', \{\
-    attribution: '&copy; <a href="https://www.openstreetmap.org/">OSM</a>',\
-    subdomains: 'abcd',\
-    maxZoom: 19\
-  \}).addTo(map);\
-  map.on('click',()=>window.open(`https://maps.google.com/?q=$\{lat\},$\{lon\}`,'_blank'));\
-\}\
-function updateMap(lat,lon)\{\
-  if(!map) \{\
-    initMap(lat,lon);\
-    // Standort-Kreismarker hinzuf\'fcgen\
-    const locationMarker = L.divIcon(\{\
-  className: 'leaflet-location-circle',\
-  iconSize: [20, 20],        // Gr\'f6\'dfe des Icons\
-  iconAnchor: [10, 10]       // Mittelpunkt = Standort\
-\});\
-L.marker([lat, lon], \{ icon: locationMarker \}).addTo(map);\
-\
-  \} else \{\
-    map.setView([lat,lon],10);\
-  \}\
-\}\
-\
-/* ---------------- Boot ---------------- */\
-document.getElementById("plusCann").onclick=()=>adjustCannabis(1);\
-document.getElementById("minusCann").onclick=()=>adjustCannabis(-1);\
-document.getElementById("resetCann").onclick=()=>resetCannabis();\
-document.getElementById("addQuickBtn").onclick=()=>\{let t=prompt("Neue Aufgabe:");if(t)addTask(t,prompt("Icon (Emoji):","\uc0\u10133 "));\};\
-\
-function boot()\{\
-  renderCannabis();document.getElementById("savedValue").textContent=computeSaved().toFixed(2)+" \'80";renderTasks();renderCalendar();\
-  if(navigator.geolocation)navigator.geolocation.getCurrentPosition(p=>loadWeather(p.coords.latitude,p.coords.longitude),()=>loadWeather(51.1657,10.4515));\
-\}\
-boot();\
-\
-// Neu: Cannabis-Drehrad bei Fenstergr\'f6\'dfe neu rendern\
-window.addEventListener('resize', () => \{\
-  const st = loadCannabis();\
-  renderCannabisDial(st.grams);\
-\});\
-\
-</script>\
-</body>\
-</html>}
+  <!-- Poppins Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+
+  <style>
+    :root {
+      --bg:#06060a;
+      --panel: rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.06);
+      --muted: rgba(255,255,255,0.62);
+     --accent: #ff4000;  /* Startfarbe des Verlaufs */
+  --accent-2: #7a0000; /* Endfarbe des Verlaufs */
+      --gap: 18px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html,body {
+      height:100%; margin:0; background:var(--bg); color:#eef2f8;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    body::before {
+      content:""; position:fixed; inset:0; z-index:1;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0.0) 45%, rgba(0,0,0,0.6) 100%);
+      pointer-events:none;
+    }
+
+    .light-rays {
+      position:fixed; inset:-20% -10% auto -10%; height:60%;
+      z-index:1; pointer-events:none;
+      background:
+        radial-gradient(800px 200px at 5% 20%, rgba(139,92,246,0.035), transparent 12%),
+        radial-gradient(700px 180px at 92% 85%, rgba(0,230,255,0.03), transparent 12%);
+      mix-blend-mode:screen; animation: floatRays 14s linear infinite;
+    }
+    @keyframes floatRays { 0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)} }
+
+    .app {
+      position:relative; z-index:2;
+      max-width:1200px; margin:36px auto; padding:18px;
+      display:grid; grid-template-columns:1fr 1fr; gap:var(--gap);
+    }
+
+    .card {
+      border-radius:14px; padding:16px;
+      background:var(--panel); border:1px solid var(--glass-border);
+      backdrop-filter:blur(10px);
+      box-shadow:0 8px 30px rgba(0,0,0,0.55);
+      display:flex; flex-direction:column; gap:10px;
+    }
+
+/* --- Begrüßungs-Box --- */
+.card.greeting {
+  grid-column: 1 / -1;
+  height: 110px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:18px;
+  gap:6px;
+  border-radius:14px;
+  background:var(--panel);
+  border:1px solid var(--glass-border);
+  backdrop-filter:blur(10px);
+}
+.card.greeting #greetingLine { font-size:20px; font-weight:700; }
+.card.greeting #greetingDateTime { color:var(--muted); font-size:13px; }
+
+/* --- Cannabis Drehrad --- */
+#cannabisDial { width:260px; margin:8px auto 0; }
+#cannabisDial svg { overflow: visible; display:block; }
+#cannabisDial line { transition: stroke-width 240ms ease, transform 300ms ease; }
+#cannabisDial text { font-family: 'Poppins', sans-serif; fill:var(--muted); font-weight:600; font-size:12px; }
+#cannabisCard .score-number { margin-top:6px; font-size:20px; text-align:center; }
+
+/* Cannabis Card neues Layout */
+#cannabisCard {
+  text-align: center;
+  padding-top: 16px;
+}
+
+#cannabisCard .cannabis-top {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+#cannabisCard .score-number {
+  font-size: 28px;
+  font-weight: 700;
+  min-width: 100px;
+}
+
+#cannabisCard .cannabis-reset {
+  margin: 8px 0 8px;
+}
+
+#cannabisDial.cannabis-dial {
+  width: 100%;
+  height: 200px;
+  margin: 8;
+}
+
+    /* Wetter links */
+    .weather { 
+      justify-content:center; 
+      text-align:center; 
+      height: 250px;
+    }
+    .weather .temp { font-weight:700; font-size:32px; }
+    .weather .meta { color:var(--muted); font-size:13px; }
+
+    /* Map rechts */
+    .map-box { 
+      border-radius:12px; 
+      overflow:hidden; 
+      cursor:pointer; 
+      height: 250px;
+    }
+    #map { width:100%; height:100%; border-radius:12px; }
+
+    /* Small cards */
+    .card.small { min-height:140px; justify-content:center; text-align:center; }
+
+    .score-number { font-weight:700; font-size:22px; }
+    .score-controls { display:flex; gap:8px; justify-content:center; margin-top:8px; }
+    .btn { background: linear-gradient(180deg,var(--accent),var(--accent-2)); border:none; color:#000;
+           padding:6px 12px; border-radius:10px; cursor:pointer; font-weight:600; font-size:13px; }
+    .btn.ghost { background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.1); }
+
+    /* Calendar */
+    .card.calendar { grid-column:1 / -1; padding:18px; gap:12px; }
+    .calendar-today-date { font-size:18px; font-weight:700; text-align:center; }
+    .calendar-today-tasks {
+      margin:10px auto 0; display:flex; gap:10px; padding:12px 18px;
+      border-radius:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05);
+      justify-content:center;
+    }
+    .calendar-history { display:flex; flex-direction:column; gap:8px; }
+    .day-row { display:flex; gap:10px; padding:8px; border-radius:10px;
+      background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); }
+    .day-date { min-width:100px; font-size:12px; color:var(--muted); }
+    .day-tasks { display:flex; gap:6px; flex-wrap:wrap; }
+
+    /* Checklist */
+    .card.checklist { min-height:230px; }
+    .tasks-wrap { display:flex; flex-direction:column; gap:10px; overflow:auto; max-height:320px; }
+    .task { border-radius:12px; padding:10px; background:rgba(255,255,255,0.02);
+      border:1px solid rgba(255,255,255,0.05); display:flex; align-items:center;
+      justify-content:space-between; font-weight:600; cursor:pointer; }
+    .task.completed { opacity:0.4; text-decoration:line-through; }
+    .task .label { display:flex; align-items:center; gap:10px; }
+    .task .delete { color:var(--muted); font-size:14px; cursor:pointer; }
+    .task.add { justify-content:center; font-size:18px; color:var(--muted); border:1px dashed rgba(255,255,255,0.1); }
+
+/* --- MOBILE Anpassung --- */
+@media(max-width:900px){
+  .app {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gap);
+  }
+
+  /* Begrüßungsbox volle Breite */
+  .card.greeting {
+    grid-column: 1 / -1;
+  }
+
+  /* Wetter links, Karte rechts */
+  .weather {
+    grid-column: 1;
+    height: 200px;
+  }
+  .map-box {
+    grid-column: 2;
+    height: 200px;
+  }
+
+  /* Alles ab der dritten Card nach Greeting, Wetter, Karte wieder volle Breite */
+  .app > .card:nth-child(n+4) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Pulsierender Kreis für Standort */
+.leaflet-location-circle {
+  position: relative;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+ background: red; /* hier */
+  box-shadow: 0 0 12px rgba(255,0,0,0.8); /* Glow auch rot */
+}
+
+.leaflet-location-circle::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 70%;
+  background: red;
+  animation: pulse 2.5s infinite;
+}
+
+@keyframes pulse {
+  0%   { transform: scale(1); opacity: 0.8; }
+  70%  { transform: scale(5); opacity: 0; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+/* Auftau-Effekt beim Laden */
+body {
+  filter: blur(25px);
+  opacity: 50;
+  animation: unblur 2.5s ease-out forwards;
+}
+
+@keyframes unblur {
+  0% { filter: blur(25px); opacity: 0; transform: translateY(-20px); }
+  100% { filter: blur(0); opacity: 1; transform: translateY(0); }
+}
+
+
+  </style>
+</head>
+<body>
+  <div class="light-rays"></div>
+  <main class="app">
+
+<!-- Begrüßungs-Box (neu) -->
+<div class="card greeting" id="greetingCard">
+  <div id="greetingLine">—</div>
+  <div id="greetingDateTime">—</div>
+</div>
+
+    <!-- Wetter links -->
+    <div class="card weather" id="weatherCard">
+      <div class="temp" id="curTemp">--°</div>
+      <div class="meta" id="tempMeta">Lädt...</div>
+    </div>
+
+    <!-- Map rechts (Leaflet) -->
+    <div class="card map-box">
+      <div id="map"></div>
+    </div>
+
+<!-- Cannabis Score (Drehrad neu layoutet) -->
+<div class="card" id="cannabisCard">
+  <div style="text-align:center;font-weight:700;margin-bottom:6px;">Cannabis-Score</div>
+
+  <div class="cannabis-top">
+    <button class="btn ghost" id="minusCann">−1</button>
+    <div class="score-number" id="cannabisValueText">-- g</div>
+    <button class="btn ghost" id="plusCann">+1</button>
+  </div>
+
+  <div class="cannabis-reset">
+    <button class="btn" id="resetCann">Reset</button>
+  </div>
+
+  <!-- SVG-Drehrad darunter -->
+  <div id="cannabisDial" class="cannabis-dial"></div>
+</div>
+
+
+
+    <!-- Rauchen Ersparnis -->
+    <div class="card small" id="smokeCard">
+      <div>Rauchfrei Ersparnis</div>
+      <div class="score-number" id="savedValue">-- €</div>
+      <div class="meta">Seit 01.06.2024 • 8 €/Tag</div>
+    </div>
+
+    <!-- Calendar -->
+    <div class="card calendar">
+      <div class="calendar-today-date" id="calendarToday">—</div>
+      <div class="calendar-today-tasks" id="calendarTodayTasks"></div>
+      <div class="calendar-history" id="calendarHistory"></div>
+    </div>
+
+    <!-- Checklist -->
+    <div class="card checklist">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div><strong>Checkliste</strong></div>
+        <button class="btn" id="addQuickBtn">+ Hinzufügen</button>
+      </div>
+      <div class="tasks-wrap" id="tasksWrap"></div>
+    </div>
+
+  </main>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+/* ---------------- Cannabis Score (Drehrad) ---------------- */
+const baseCannabis = { grams: 3500, baseDate: new Date(Date.UTC(2025,9,1)), monthlyAdd: 50 };
+function monthDiff(d1,d2){ return (d2.getUTCFullYear()-d1.getUTCFullYear())*12 + (d2.getUTCMonth()-d1.getUTCMonth()); }
+function monthKey(d){ return d.getUTCFullYear() + "-" + String(d.getUTCMonth()+1).padStart(2,"0"); }
+
+function loadCannabis(){
+  let st = JSON.parse(localStorage.getItem("sw_cannabis") || "null");
+  const now = new Date();
+  if(!st){
+    const m = monthDiff(baseCannabis.baseDate, now);
+    st = { grams: baseCannabis.grams + m * baseCannabis.monthlyAdd, lastMonthlyKey: monthKey(now) };
+  }
+  localStorage.setItem("sw_cannabis", JSON.stringify(st));
+  return st;
+}
+function saveCannabis(st){ localStorage.setItem("sw_cannabis", JSON.stringify(st)); renderCannabis(); }
+
+function renderCannabis(){
+  const st = loadCannabis();
+  const g = st.grams;
+  const el = document.getElementById("cannabisValueText");
+  if(el) el.textContent = g + " g";
+  renderCannabisDial(g);
+}
+
+function adjustCannabis(d){
+  let s = loadCannabis();
+  s.grams += d;
+  if(s.grams < 0) s.grams = 0;
+  saveCannabis(s);
+}
+
+function resetCannabis(){
+  const now = new Date();
+  const m = monthDiff(baseCannabis.baseDate, now);
+  saveCannabis({ grams: baseCannabis.grams + m * baseCannabis.monthlyAdd, lastMonthlyKey: monthKey(now) });
+}
+
+/* Zeichnet das minimalistische Drehrad als SVG */
+function renderCannabisDial(grams){
+  const container = document.getElementById("cannabisDial");
+  if(!container) return;
+
+  const width = container.clientWidth || 480;
+const height = 200;
+const visibleSpan = 1000; // ±500 g
+  const min = Math.max(0, Math.round(grams - visibleSpan/2));
+  const max = Math.round(grams + visibleSpan/2);
+  const ticks = 25; // etwas dichter, aber nicht zu viele
+  const centerX = width / 2;
+  const baseY = height * 0.35;
+  const lineLen = 28;
+
+  const tickLines = [];
+  for(let i=0;i<=ticks;i++){
+    const t = i/ticks;
+    const x = t * width;
+    const y1 = baseY;
+    const y2 = baseY - lineLen;
+    // Fade-Out: Alpha verringert sich am Rand
+    let alpha = 1 - Math.abs(t - 0.5) * 2; // Mitte = 1, Ränder = 0
+    if(alpha<0) alpha = 0;
+    const strokeW = (i % 5 === 0) ? 2 : 1;
+    tickLines.push(`<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="rgba(255,255,255,${0.8*alpha})" stroke-width="${strokeW}" stroke-linecap="round"/>`);
+  }
+
+  // roter Marker mittig
+  const markerX = centerX;
+  const marker = `<line x1="${markerX}" y1="${baseY}" x2="${markerX}" y2="${baseY - lineLen - 6}" stroke="#FF3B3B" stroke-width="3" stroke-linecap="round"/>`;
+
+  const svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+    ${tickLines.join("")}
+    ${marker}
+    <text x="20" y="${baseY+20}" font-size="12" text-anchor="start" fill="rgba(255,255,255,0.7)">${min} g</text>
+    <text x="${width-20}" y="${baseY+20}" font-size="12" text-anchor="end" fill="rgba(255,255,255,0.7)">${max} g</text>
+  </svg>`;
+
+  container.innerHTML = svg;
+}
+
+
+/* ---------------- Greeting Box (dynamisch) ---------------- */
+function updateGreeting(){
+  const now = new Date();
+  const h = now.getHours();
+  let greet = (h >= 3 && h < 11) ? 'Guten Morgen, Marco.' : (h >= 11 && h < 18) ? 'Guten Tag, Marco.' : 'Guten Abend, Marco.';
+  const dateStr = now.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const timeStr = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  const lineEl = document.getElementById('greetingLine');
+  const dtEl = document.getElementById('greetingDateTime');
+  if(lineEl) lineEl.textContent = greet;
+  if(dtEl) dtEl.textContent = `${dateStr} • ${timeStr}`;
+}
+setInterval(updateGreeting, 1000);
+updateGreeting();
+
+/* ---------------- Rauchen Ersparnis ---------------- */
+
+const smokeStart=new Date(Date.UTC(2024,5,1)),price=8;
+function computeSaved(){const now=new Date();const days=Math.floor((now-smokeStart)/(1000*60*60*24));return days*price;}
+
+/* ---------------- Tasks ---------------- */
+const DEF=[{id:"guitar",title:"Gitarre üben",icon:"🎸"},
+{id:"bike",title:"Fahrrad fahren",icon:"🚲"},
+{id:"sling",title:"Zwille schießen",icon:"🏹"},
+{id:"ets",title:"ETS lernen",icon:"📚"},
+{id:"content",title:"SomaWerk Content",icon:"🎥"}];
+function loadDefs(){
+  let stored = [];
+  try {
+    let raw = localStorage.getItem("sw_tasks_defs");
+    if (raw) stored = JSON.parse(raw);
+  } catch(e){
+    stored = [];
+  }
+
+  // Kombiniere Defaults + gespeicherte, ohne doppelte IDs
+  const merged = [...DEF];
+  stored.forEach(task => {
+    if (!merged.find(t => t.id === task.id)) {
+      merged.push(task);
+    }
+  });
+
+  return merged;
+}
+function saveDefs(d){localStorage.setItem("sw_tasks_defs",JSON.stringify(d));}
+function loadStore(){return JSON.parse(localStorage.getItem("sw_calendar")||"{}");}
+function saveStore(s){localStorage.setItem("sw_calendar",JSON.stringify(s));}
+function todayKey(){return new Date().toISOString().split("T")[0];}
+function isDone(id){return (loadStore()[todayKey()]||[]).includes(id);}
+function toggleTask(id){let s=loadStore(),arr=s[todayKey()]||[],i=arr.indexOf(id);if(i==-1)arr.push(id);else arr.splice(i,1);s[todayKey()]=arr;saveStore(s);renderTasks();renderCalendar();}
+function addTask(t,icon){let d=loadDefs();d.push({id:"t_"+Date.now(),title:t,icon:icon||"➕"});saveDefs(d);renderTasks();}
+function deleteTask(id){let d=loadDefs().filter(x=>x.id!==id);saveDefs(d);let s=loadStore();Object.keys(s).forEach(k=>{s[k]=s[k].filter(x=>x!==id)});saveStore(s);renderTasks();renderCalendar();}
+
+/* ---------------- Render ---------------- */
+function renderTasks(){
+  let d=loadDefs(),wrap=document.getElementById("tasksWrap");wrap.innerHTML="";
+  d.forEach(task=>{
+    let el=document.createElement("div");el.className="task"+(isDone(task.id)?" completed":"");
+    el.innerHTML=`<div class="label"><span>${task.icon}</span><span>${task.title}</span></div><span class="delete">X</span>`;
+    el.querySelector(".label").onclick=()=>toggleTask(task.id);
+    el.querySelector(".delete").onclick=()=>deleteTask(task.id);
+    wrap.appendChild(el);
+  });
+  let add=document.createElement("div");add.className="task add";add.textContent="+";add.onclick=()=>{let t=prompt("Neue Aufgabe:");if(t)addTask(t,prompt("Icon (Emoji):","➕"));};wrap.appendChild(add);
+}
+function renderCalendar(){
+  let today=new Date();document.getElementById("calendarToday").textContent=today.toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  let store=loadStore(),arr=store[todayKey()]||[],defs=Object.fromEntries(loadDefs().map(x=>[x.id,x]));
+  let box=document.getElementById("calendarTodayTasks");box.innerHTML=arr.length?arr.map(id=>defs[id]?.icon||" ").join(" "):"<span class='meta'>Keine Tasks</span>";
+  let hist=document.getElementById("calendarHistory");hist.innerHTML="";Object.keys(store).sort().reverse().filter(k=>k<todayKey()).slice(0,7).forEach(k=>{
+    let row=document.createElement("div");row.className="day-row";row.innerHTML=`<div class="day-date">${new Date(k).toLocaleDateString("de-DE",{weekday:"short",day:"2-digit",month:"2-digit"})}</div><div class="day-tasks">${store[k].map(id=>defs[id]?.icon||"●").join(" ")}</div>`;hist.appendChild(row);
+  });
+}
+
+/* ---------------- Wetter ---------------- */
+async function loadWeather(lat,lon){
+  const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`);
+  const j=await r.json();if(j.current_weather){document.getElementById("curTemp").textContent=Math.round(j.current_weather.temperature)+"°C";
+    document.getElementById("tempMeta").textContent=`${Math.round(j.daily.temperature_2m_min[0])}° / ${Math.round(j.daily.temperature_2m_max[0])}° • Regen: ${Math.round(j.daily.precipitation_probability_max[0])}%`;
+    updateMap(lat,lon);
+  }
+}
+
+/* ---------------- Map (Leaflet) ---------------- */
+let map;
+function initMap(lat,lon){
+  map = L.map('map').setView([lat, lon], 10);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/">OSM</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(map);
+  map.on('click',()=>window.open(`https://maps.google.com/?q=${lat},${lon}`,'_blank'));
+}
+function updateMap(lat,lon){
+  if(!map) {
+    initMap(lat,lon);
+    // Standort-Kreismarker hinzufügen
+    const locationMarker = L.divIcon({
+  className: 'leaflet-location-circle',
+  iconSize: [20, 20],        // Größe des Icons
+  iconAnchor: [10, 10]       // Mittelpunkt = Standort
+});
+L.marker([lat, lon], { icon: locationMarker }).addTo(map);
+
+  } else {
+    map.setView([lat,lon],10);
+  }
+}
+
+/* ---------------- Boot ---------------- */
+document.getElementById("plusCann").onclick=()=>adjustCannabis(1);
+document.getElementById("minusCann").onclick=()=>adjustCannabis(-1);
+document.getElementById("resetCann").onclick=()=>resetCannabis();
+document.getElementById("addQuickBtn").onclick=()=>{let t=prompt("Neue Aufgabe:");if(t)addTask(t,prompt("Icon (Emoji):","➕"));};
+
+function boot(){
+  renderCannabis();document.getElementById("savedValue").textContent=computeSaved().toFixed(2)+" €";renderTasks();renderCalendar();
+  if(navigator.geolocation)navigator.geolocation.getCurrentPosition(p=>loadWeather(p.coords.latitude,p.coords.longitude),()=>loadWeather(51.1657,10.4515));
+}
+boot();
+
+// Neu: Cannabis-Drehrad bei Fenstergröße neu rendern
+window.addEventListener('resize', () => {
+  const st = loadCannabis();
+  renderCannabisDial(st.grams);
+});
+
+</script>
+</body>
+</html>
